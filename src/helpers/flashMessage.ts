@@ -1,0 +1,16 @@
+export const FLASH_MESSAGE = {
+  SUCCESS: 'success',
+  ERROR: 'error',
+  WARNING: 'alerta',
+  INFO: 'info',
+  UNKNWON_ERROR: 'Ocorreu um erro',
+  SERVER_ERROR: 'Erro no servidor',
+  ID_REQUIED: 'O id é obrigatorio para está rota',
+  BODY_REQUIED: 'O corpo da requisição é obrigatorio',
+  USER_CREATED: 'Útilizador criado com sucesso',
+  USER_NOT_CREATED: 'Utilizador não criado',
+  USER_UPDATED: 'Útilizador actualizado com sucesso',
+  USER_NOT_UPDATED: 'Útilizador não actualizado',
+  USER_NOT_FOUND: 'Útilizador não econtrado',
+  USER_DELETED: 'Útilizador eliminado com sucesso',
+};

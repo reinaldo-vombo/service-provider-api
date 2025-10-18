@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                     String           @id @default(uuid())
+  fullName               String
+  nif                    String           @unique
+  email                  String           @unique
+  password               String
+  role                   Role             @default(CLIENT)
+  // saldo em centavos (inteiro) para evitar problemas de float
+  balance                Int              @default(0)
+  services               Service[]        @relation("providerServices")
+  reservationsAsClient   Reservation[]    @relation("clientReservations")
+  reservationsAsProvider Reservation[]    @relation("providerReservations")
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
+  TransactionLog         TransactionLog[]
+
+  @@index([role])
+}
+
+model Service {
+  id          String        @id @default(uuid())
+  name        String
+  description String?
+  price       Int // preco em centavos
+  providerId  String
+  provider    User          @relation("providerServices", fields: [providerId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  Reservation Reservation[]
+
+  @@index([providerId])
+}
+
+model Reservation {
+  id           String            @id @default(uuid())
+  clientId     String
+  providerId   String
+  serviceId    String
+  amount       Int // valor cobrado (centavos)
+  status       ReservationStatus @default(PENDING)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  // optional: reason for cancel
+  cancelReason String?
+
+  client         User             @relation("clientReservations", fields: [clientId], references: [id])
+  provider       User             @relation("providerReservations", fields: [providerId], references: [id])
+  service        Service          @relation(fields: [serviceId], references: [id])
+  TransactionLog TransactionLog[]
+
+  @@index([clientId])
+  @@index([providerId])
+  @@index([serviceId])
+}
+
+model TransactionLog {
+  id            String          @id @default(uuid())
+  userId        String
+  type          TransactionType
+  amount        Int
+  balanceBefore Int
+  balanceAfter  Int
+  description   String?
+  reservationId String?
+  createdAt     DateTime        @default(now())
+
+  user        User         @relation(fields: [userId], references: [id])
+  reservation Reservation? @relation(fields: [reservationId], references: [id])
+
+  @@index([userId])
+  @@index([reservationId])
+}
+
+enum TransactionType {
+  DEBIT
+  CREDIT
+  REFUND
+}
+
+enum Role {
+  CLIENT
+  PROVIDER
+  ADMIN
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  REJECTED
+}
