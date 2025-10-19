@@ -30,23 +30,24 @@ const cancelReservation = asyncHandler(async (req, res) => {
   sendResponse<Reservation>(res, {
     statusCode: httpStatus.CREATED,
     success: true,
-    message: 'Academic Faculty created successfully',
+    message: 'Reserva cancelada com sucesso',
     data: result,
   });
 });
 const updateReservation = asyncHandler(async (req, res) => {
   const userId = req.user!.id;
-  const id = req.params.id;
-  const result = await ReservationService.updateReservation(
-    id,
+  const reservationId = req.params.id;
+  const data = req.body;
+  const result = await ReservationService.updateReservation({
+    reservationId,
     userId,
-    req.body
-  );
+    data,
+  });
 
   sendResponse<Reservation>(res, {
     statusCode: httpStatus.CREATED,
     success: true,
-    message: 'Reserva cancelada e removida com sucesso',
+    message: 'Reserva autoalizada com sucesso',
     data: result,
   });
 });

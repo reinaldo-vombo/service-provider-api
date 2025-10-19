@@ -1,7 +1,6 @@
 import ApiError from '../../error/ApiError';
 import httpStatus from 'http-status';
 import { prisma } from '../../shared/prisma';
-import { Service } from '../../generated/prisma';
 
 const getAllTransation = async () => {
   try {

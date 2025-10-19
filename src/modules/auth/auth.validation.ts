@@ -14,6 +14,6 @@ export const logInZodSchema = z.object({
     email: z.email({ error: 'Email é obrigatorio' }),
     password: z
       .string()
-      .max(10, { error: 'Palavra-passe deve conter no maximo 10 caracteres' }),
+      .max(15, { error: 'Palavra-passe deve conter no maximo 10 caracteres' }),
   }),
 });

@@ -8,7 +8,7 @@ const router = express.Router();
 // Criar reserva
 router.get(
   '/',
-  authGuard(ENUM_USER_ROLE.ADMIN),
+  authGuard(ENUM_USER_ROLE.CLIENT),
   TransactionLogController.getAllTransation
 );
 router.get(

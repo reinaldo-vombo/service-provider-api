@@ -75,7 +75,7 @@ const createReservation = async (
           amount,
           balanceBefore: client.balance,
           balanceAfter: clientAfter!.balance,
-          reservationId: reservation.id,
+          reservationId: newReservation.id,
         },
         {
           userId: providerId,
@@ -83,7 +83,7 @@ const createReservation = async (
           amount,
           balanceBefore: provider.balance - amount,
           balanceAfter: providerAfter!.balance,
-          reservationId: reservation.id,
+          reservationId: newReservation.id,
         },
       ],
     });
@@ -197,11 +197,15 @@ const cancelReservation = async ({
   }
 };
 
-const updateReservation = async (
-  reservationId: string,
-  userId: string,
-  status: ReservationStatus
-) => {
+const updateReservation = async ({
+  reservationId,
+  userId,
+  data,
+}: {
+  reservationId: string;
+  userId: string;
+  data: any;
+}) => {
   try {
     const reservation = await prisma.reservation.findUnique({
       where: { id: reservationId },
@@ -214,12 +218,12 @@ const updateReservation = async (
 
     // Verifica se o usuário é o dono
     if (reservation.clientId !== userId) {
-      throw new ApiError(httpStatus.FORBIDDEN, 'Sem permissão');
+      throw new ApiError(httpStatus.FORBIDDEN, 'Sem permissão para atualizar');
     }
 
     const updated = await prisma.reservation.update({
       where: { id: reservationId },
-      data: { status },
+      data,
     });
 
     return updated;
